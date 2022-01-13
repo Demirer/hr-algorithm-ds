@@ -45,9 +45,9 @@ public class TheBomberManTest {
                     }
                 })
                 .collect(toList());
-
         List<String> result = theBombermanGame.bomberMan(n, grid);
-
         assertEquals(gridRes, result);
+        bufferedReader.close();
+        bufferedReaderRes.close();
     }
 }
