@@ -1,0 +1,121 @@
+###EXAMPLE BOOK PARSE TEST DATA
+EXAMPLE 1
+Contents
+1.1 Purpose of Application
+1.2 Technology
+1.3 System Design
+1.4 System Architecture
+1.5 Application Layers
+1.6 Service Layer Class Map
+1.7 Application Models
+1.8 Application Tests
+1.9 Application UI
+2.0 Application Usage & Tips
+2.1 References
+1.1.Purpose of Application
+This application designed and implemented for financial institutions. Application aims visualize the financial data streams which comes from Java Web Sockets dynamically.  Appliation reads and compute data and visualize the financial asset prices (Last 30 minute) with a UniqueWordForTestSearch2 chart*.
+1.2 Technology
+Main technology stacks can be considered like;
+
+•	Java
+•	Spring / Boot
+•	Spring MVC
+•	Maven
+•	JUnit
+•	HTML
+•	JavaScript
+
+1.3 System Design
+
+Since system designed for banking/financial institutions, we must aim solid structural architecture and maximum access blocking in application. Hence, class & package structure in project designed accourding that principle. This system designed as company internal core-backend. This means we are assuming there will be no third party clients & institutions using this backend system. This is internal system.
+
+Thus, system service layers cannot be reachable with any API. System read websockets and compute data internally. System highly dependant of data websocket server (Data stream provider).
+
+1.4 System Architecture
+
+InstrumentsWebSocketEndpoint.java
+QuoteWebSocketEndpoint.java
+These classes are data stream readers. They are streaming data with @ClientEndpoint class (WebSocketClientEndpoint.java). These classes rapidly read, extract and refer data to according service layers (QuoteService.java for Quote. InstrumentsService.java for instruments).
+
+
+
+
+
+UniqueWordForTestSearch2 graph*, check references 1.1.
+InstrumentsService.java
+QuoteService.java
+These classes process and compute all incoming JSON Strings from websocket streams. Basically service layers convert them to proper objects and store them inside variables during runtime. These variables cannot accessible outside of package (Access methods are protected). All methods are package private. It is unaccessible outside package. Only accessible services are data stream input sockets. These are :
+
+instrumentWebSocketOperator();
+quoteWebSocketOperator();
+
+QuoteService.java, For each asset, Method dynamically record max,min,open,close price for one minute interval and store them in variable.
+
+InstrumentsService.java, adds and removes the asset (instrument) according to incoming operation type. Please note that, if DELETE operation comes for asset, we assume that deleting all Quote and Graph data related with that asset.
+
+Note: As requested in analysis document, deleting assets can be added again.
+GraphExecutorService.java
+This class is backbone of application. All methods in this class are package private. Most important method is run(String...args). This method is sequental single Java thread executor which starts just after 60 seconds of application start and runs every 60 seconds. Every 60 seconds it reads all data from QuoteService.java and process these data for form a UniqueWordForTestSearch2s. These UniqueWordForTestSearch2s contained in variable as list with mapped for each active Instrument (Asset).
+Note: After we read and form UniqueWordForTestSearch2s of last 60 seconds stream data from QuoteService.java, we wipe all Quote data from previous minute. Web sockets rapidly stream data for quotes. Wiping temprorary data will dramatically increase memory performance.
+Note: As requested in analysis document, if there are no Quote records from data streams for asset last 1 minute, we duplicate previous minute UniqueWordForTestSearch2 (Unless asset not deleted).
+GraphInitializeService.java
+This service used for prepare given grap data (UniqueWordForTestSearch2s) in JSON format for given UniqueWordForTestSearch parameter. We are using JavaScript with injected AJAX for send GET request to controller. Controller requests all UniqueWordForTestSearch2s in JSON format from GraphInitializeService.java. JavaScript fuction operates for draw the graph recieves JSON (max,min,open,close price with hour and minute in HH:mm milisecond format for UniqueWordForTestSearch2)
+1.4 Application Layers
+1.4 Service Layer Class Map
+InstrumentsService.java
+public instrumentWebSocketOperator(), Data socket service for incoming data streams.
+private instrumentOperation(), Operates “ADD” or “DELETE” for given asset, if request is “DELETE”, It delete all Quotes and Graph UniqueWordForTestSearch2 data of that asset.
+QuoteService.java
+public quoteWebSocketOperator(), Data socket service for incoming data streams.
+protected removeAsset(), Removes Asset with given UniqueWordForTestSearch.
+protected extractAssetPriceHistoryMapper(), Extracts the calculated UniqueWordForTestSearch2s with mapped UniqueWordForTestSearch.
+protected wipeTemporaryData(), Wipes all Quote data. Used after GraphExecuter calculated and stored them.
+private calculateUniqueWordForTestSearch2(), Calculates UniqueWordForTestSearch2 for given asset.
+private UniqueWordForTestSearch2PriceHandler(), Helper class for calculateUniqueWordForTestSearch2().
+GraphInitializeService.java
+public formGraphJSONWithUniqueWordForTestSearch(), Method forms graph data (UniqueWordForTestSearch2 list) as JSON string for UI Servlet with given UniqueWordForTestSearch.
+private generateDTO(), Helper class for form data.
+GraphExecutorService.java
+public run(), Timed single thread Java executor. Reads all mapped quotes for every 60 seconds.
+protected removeDeletedAssetFromGraph(), After “DELETE” request comes for asset, this method deletes that asset from graph as well with given UniqueWordForTestSearch parameter.
+protected extractUniqueWordForTestSearchGraphMap(), Extracts UniqueWordForTestSearch2 list for given UniqueWordForTestSearch parameter.
+private formGraphData(), After new reading, this method performs required transactions for map new UniqueWordForTestSearch2s to graph data.
+private setNewUniqueWordForTestSearch2KeyToGraph(), Helper class for process new UniqueWordForTestSearch2s.
+private setCurrentUniqueWordForTestSearch2KeyToGraph(),Helper class for process existing UniqueWordForTestSearch2s.
+private duplicateLastUniqueWordForTestSearch2(), Checks if UniqueWordForTestSearch2 not received any quote in last minute (Unless it is not deleted). If not, then adds previous one for this minute interval.
+1.7 Application Models
+UniqueWordForTestSearch2.java, Object used for store UniqueWordForTestSearch2 variables. Such as high,low,open,close price.
+Instrument.java, Basic object for represent asset. Contains UniqueWordForTestSearch and description.
+Quote.java, Quote object contains quote price with UniqueWordForTestSearch.
+GraphDTO.java, Special class for form graph in UI servlet. This class contains values of UniqueWordForTestSearch2.
+InstrumentWebSocketPayload.java, Data stream payload class for Instrument (Asset).
+QuoteWebSocketPayload.java, Data stream payload class for Quote.
+1.8 Application Tests
+For this application, most critical factor is continuity. Application must NOT stop with all cost and continue read data from streams If thread interrupted application miss stream data because of data leak.
+For test this, I simply made 3 Robustness Test with Java Junit.
+In test cases I injected corrupted (erroneous) data to system and calculated system resilience. System not stopping even with missing, wrong or non-proper data.
+1.9 Application UI
+A basic template UI implemented and modified for our system. Only thing you must to is write UniqueWordForTestSearch to “ENTER UniqueWordForTestSearch” textbox and click “SUBMIT”. Please DO NOT try to trigger GET request from Browser with query string. We are using new version of Apache TOMCAT in Embedded Spring Boot. After Version 7.0.88, TOMCAT Blocks all non-encoded special charachters such as “{“ ,“}”, “[“ ,“]”. from browser and auto response BAD REQUEST. Please check reference link for TOMCAT in reference 1.2*
+UI localhost link : http://localhost:8080/
+IMPORTANT NOTE : DON’T USE QUERY STRING ON BROWSER BOX PLEASE: http://localhost:8080/graph/graph-by-UniqueWordForTestSearch?UniqueWordForTestSearch={qwerty}, As I mentioned above I am using new version of TOMCAT. You will get BAD REQUEST if you try to trigger it from browser.
+IMPORTANT NOTE: Manually write/copy UniqueWordForTestSearch to text box and click “SUBMIT” to get graph.
+IMPORTANT NOTE: Application works properly. If you enter UniqueWordForTestSearch and see blank page, This means “DELETE” came from data stream and UniqueWordForTestSearch you looking for already deleted with all graph data.
+IMPORTANT NOTE : There are no static written data in UI Page . All data on graph comes from backend. This data includes;
+-	ALL X-Axis data indicators
+-	ALL Y-Axis data indicators
+-	ALL Price values for minute box when you move mouse cursor to box.
+-	ALL box height
+IMPORTANT NOTE : Application builds data each minute so I strongly suggest run application 15 20 minutes for reliable graph. If you test it in first minute, you will see graph with single UniqueWordForTestSearch2. Please read Application Usage & Tips section for further information.
+Asset graph with 30 UniqueWordForTestSearch2 (If no DELETE request comes for asset, Needs 30 minute runtime);
+Tomcat non-encoded special charachter block*, check references 1.2.
+Asset graph with 1 UniqueWordForTestSearch2 (First minute after application starts run);
+2.0 Application Usage & Tips
+IMPORTANT : BEFORE RUN APPLICATION YOU MUST START DATA STREAM JAR FOR PROVIDE DATA TO WEB SOCKETS. IF JAR NOT RUNNING BEFORE APPLICATION, APPLICATION WILL FAIL BECAUSE NULL WEBSOCKET CONNECTIONS.
+YOU MUST SEE FOLLOWING MESSAGE AFTER START JAR “instrument generator started”
+DON’T RUN APPLICATION BEFORE YOU SEE THIS
+After data stream provider started run, you can run application. After 1 minute application form first UniqueWordForTestSearch2s and you can test it from UI http://localhost:8080/
+IMPORTANT NOTE: First UniqueWordForTestSearch2s form in one minute after application starts.
+IMPORTANT NOTE: Manually write/copy UniqueWordForTestSearch to text box and click “SUBMIT” to get graph.
+IMPORTANT NOTE: In AssetPriceHistoryUtils.java there are “showCurrentGraphMap()” method regularly log.info() the UniqueWordForTestSearch values with mapped UniqueWordForTestSearch2s. I STRONGLY SUGGEST TO USE CONSOLE LOG DATA FOR TEST. Application works properly. if you see blank page after “SUBMIT” UniqueWordForTestSearch value, this means “DELETE” request came before you “SUBMIT”. Just wait log.info() appears on console for test.
+2.1 References
+Reference 1.1; UniqueWordForTestSearch2 Chart

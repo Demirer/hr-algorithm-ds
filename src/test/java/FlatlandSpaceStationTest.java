@@ -6,12 +6,12 @@ import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FlatlandSpaceStationTest {
+class FlatlandSpaceStationTest {
 
     private final FlatlandSpaceStations flatlandSpaceStations = new FlatlandSpaceStations();
 
     @Test
-    public void flatlandSpaceStationTest() throws Exception{
+    void flatlandSpaceStationTest() throws Exception{
         Scanner scanner = new Scanner(new FileReader("src/test/resources/FlatlandSpaceStationsTest.txt"));
         Scanner scannerRes = new Scanner(new FileReader("src/test/resources/FlatlandSpaceStationsRes.txt"));
 

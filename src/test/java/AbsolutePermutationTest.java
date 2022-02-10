@@ -11,12 +11,12 @@ import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AbsolutePermutationTest {
+class AbsolutePermutationTest {
 
     private final AbsolutePermutation absolutePermutation = new AbsolutePermutation();
 
     @Test
-    public void absolutePermutationTest() throws Exception{
+    void absolutePermutationTest() throws Exception{
 
         BufferedReader bufferedReader = new BufferedReader(new FileReader("src/test/resources/AbsolutePermutationTest.txt"));
         BufferedReader bufferedReaderRes = new BufferedReader(new FileReader("src/test/resources/AbsolutePermutationRes.txt"));

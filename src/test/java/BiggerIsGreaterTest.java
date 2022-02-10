@@ -10,12 +10,12 @@ import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BiggerIsGreaterTest {
+class BiggerIsGreaterTest {
 
     private final BiggerIsGreater biggerIsGreater = new BiggerIsGreater();
 
     @Test
-    public void biggerIsGreaterTest() throws Exception {
+    void biggerIsGreaterTest() throws Exception {
         BufferedReader bufferedReader = new BufferedReader(new FileReader("src/test/resources/BiggerIsGreaterTest.txt"));
         BufferedReader bufferedReaderRes = new BufferedReader(new FileReader("src/test/resources/BiggerIsGreaterRes.txt"));
 

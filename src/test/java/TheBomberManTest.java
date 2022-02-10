@@ -1,8 +1,5 @@
 import com.hr_algorithm_ds.algorithm.TheBombermanGame;
-import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 
 import java.io.*;
 import java.util.List;
@@ -11,13 +8,13 @@ import java.util.stream.IntStream;
 import static java.util.stream.Collectors.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TheBomberManTest {
+class TheBomberManTest {
 
 
     private final TheBombermanGame theBombermanGame = new TheBombermanGame();
 
     @Test
-    public void theBomberManTest() throws Exception{
+    void theBomberManTest() throws Exception{
 
         BufferedReader bufferedReader = new BufferedReader(new FileReader("src/test/resources/TheBomberManTest.txt"));
 
