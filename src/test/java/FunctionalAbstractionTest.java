@@ -53,44 +53,4 @@ class FunctionalAbstractionTest {
         String result = functionalAbstraction.stringSupplierBasic(firstString);
         assertEquals("HELLO",result);
     }
-    @Test
-    void test(){
-        List<Integer> arr = new ArrayList<>();
-        arr.add(5);
-        arr.add(4);
-        arr.add(4);
-        arr.add(2);
-        arr.add(2);
-        arr.add(8);
-
-        List<Integer> result = new ArrayList<>();
-        while(!arr.isEmpty()){
-            int min = Collections.min(arr);
-            int cuts =0;
-            for (int i = 0; i < arr.size(); i++) {
-                arr.set(i, arr.get(i)-min);
-                cuts++;
-            }
-            arr = removeAll(arr,0);
-            result.add(cuts);
-        }
-        System.out.println(result);
-    }
-
-    List<Integer> removeAll(List<Integer> list, Integer element) {
-        int index;
-        while ((index = list.indexOf(element)) >= 0) {
-            list.remove(index);
-        }
-        return list;
-    }
-
-
-    public int calculateListForIndexSequence(List<Integer> numbers){
-        int result = 0;
-        for(Integer number : numbers){
-            result += number;
-        }
-        return result;
-    }
 }
