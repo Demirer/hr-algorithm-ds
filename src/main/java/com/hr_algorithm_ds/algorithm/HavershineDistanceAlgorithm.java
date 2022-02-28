@@ -1,4 +1,4 @@
-package com.hr_algorithm_ds.util;
+package com.hr_algorithm_ds.algorithm;
 
 public class HavershineDistanceAlgorithm {
 
