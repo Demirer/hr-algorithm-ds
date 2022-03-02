@@ -1,19 +1,18 @@
 package com.hr_algorithm_ds.algorithm.sort;
 
 public class QuickSort {
-    //FIXME: NOT WORK
-    public void quickSort(int[] arr, int begin, int end) {
-        if (begin < end) {
-            int partitionIndex = partition(arr, begin, end);
-            quickSort(arr, begin, partitionIndex-1);
-            quickSort(arr, partitionIndex+1, end);
+    public void quickSort(int[] arr, int beginIndex, int endIndex) {
+        if (beginIndex < endIndex) {
+            int partitionIndex = partition(arr, beginIndex, endIndex);
+            quickSort(arr, beginIndex, partitionIndex-1);
+            quickSort(arr, partitionIndex+1, endIndex);
         }
     }
-    private int partition(int[] arr, int begin, int end) {
-        int pivot = arr[end];
-        int i = (begin-1);
+    private int partition(int[] arr, int beginIndex, int endIndex) {
+        int pivot = arr[endIndex];
+        int i = (beginIndex-1);
 
-        for (int j = begin; j < end; j++) {
+        for (int j = beginIndex; j < endIndex; j++) {
             if (arr[j] <= pivot) {
                 i++;
 
@@ -22,11 +21,9 @@ public class QuickSort {
                 arr[j] = swapTemp;
             }
         }
-
         int swapTemp = arr[i+1];
-        arr[i+1] = arr[end];
-        arr[end] = swapTemp;
-
+        arr[i+1] = arr[endIndex];
+        arr[endIndex] = swapTemp;
         return i+1;
     }
 }

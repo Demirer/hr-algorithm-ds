@@ -1,23 +1,16 @@
 package com.hr_algorithm_ds.algorithm.sort;
 
 public class MergeSort {
-    //FIXME: NOT WORK
-    public int[] mergeSort(int[] a, int n) {
-        if (n < 2) { return a;}
-        int mid = n / 2;
+    public void mergeSort(int[] a, int arraySize) {
+        if (arraySize < 2) { return;}
+        int mid = arraySize / 2;
         int[] l = new int[mid];
-        int[] r = new int[n - mid];
-        for (int i = 0; i < mid; i++) {
-            l[i] = a[i];
-        }
-        for (int i = mid; i < n; i++) {
-            r[i - mid] = a[i];
-        }
+        int[] r = new int[arraySize - mid];
+        System.arraycopy(a, 0, l, 0, mid);
+        if (arraySize - mid >= 0) System.arraycopy(a, mid, r, 0, arraySize - mid);
         mergeSort(l, mid);
-        mergeSort(r, n - mid);
-        merge(a, l, r, mid, n - mid);
-
-        return a;
+        mergeSort(r, arraySize - mid);
+        merge(a, l, r, mid, arraySize - mid);
     }
 
     private static void merge(int[] a, int[] l, int[] r, int left, int right) {
