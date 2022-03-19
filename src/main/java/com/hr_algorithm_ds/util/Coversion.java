@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 public class Coversion {
 
     public static List<Integer> convertIntArrayToArrayList (int[] intArray){
-        final List<Integer> intArrayList = Arrays.stream(intArray).boxed().collect(Collectors.toList());
-        return intArrayList;
+        return Arrays.stream(intArray).boxed().collect(Collectors.toList());
     }
 }
