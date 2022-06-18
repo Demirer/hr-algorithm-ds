@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Permutation {
 
-    public static List<String> permutationReturn(String prefix, String str, List<String> tmpList) {
+    private static List<String> permutationReturn(String prefix, String str, List<String> tmpList) {
         int n = str.length();
         if (n == 0) tmpList.add(prefix);
         else {
